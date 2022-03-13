@@ -1,4 +1,4 @@
-# ECSE211 Project: Team N - TEAM_NAME
+# ECSE211 Project: Team 12 - TEAM_NAME
 
 :triangular_flag_on_post:
 
