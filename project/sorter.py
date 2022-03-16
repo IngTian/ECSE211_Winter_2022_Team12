@@ -52,10 +52,13 @@ if __name__ == "__main__":
             color: Color = C.detect_color()
             if color is not None and color != Color.UNIDENTIFIED:
                 if color == Color.RED:
+                    log("Detected red cube......pushing", SUBSYSTEM_NAME)
                     RP.push_cube()
                 elif color == Color.GREEN:
+                    log("Detected green cube......pushing", SUBSYSTEM_NAME)
                     GP.push_cube()
                 elif color == Color.BLUE:
+                    log("Detected blue cube......pushing", SUBSYSTEM_NAME)
                     BP.push_cube()
             
             # If we detect another touch,
