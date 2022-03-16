@@ -12,7 +12,7 @@ ejection unit to push the requested cube into the hole.
 
 # Adjust these imports based on your implementation
 #from logic import get_bin_for_color
-from utils.brick import wait_ready_sensors, TouchSensor
+from utils.brick import wait_ready_sensors, TouchSensor, Motor
 from utils.logging import log
 import time
 from components.cube_ejection_unit import CubeEjectionUnit
@@ -24,6 +24,9 @@ from components.color_detection_unit import ColorDetectionUnit, Color
 RP = CubeEjectionUnit("A")
 GP = CubeEjectionUnit("B")
 BP = CubeEjectionUnit("C")
+CONVEYER_BELT = Motor("D")
+CONVEYER_BELT.reset_encoder()
+CONVEYER_BELT.set_limits(dps=2050, power=80)
 C = ColorDetectionUnit(1)
 T = TouchSensor(2)
 
@@ -34,7 +37,7 @@ SUBSYSTEM_NAME = "Deliver"
 
 
 if __name__ == "__main__":
-    log("The sorter has started.", SUBSYSTEM_NAME)
+    log("The deliver has started.", SUBSYSTEM_NAME)
     flag = False
 
     while not flag:
@@ -42,16 +45,20 @@ if __name__ == "__main__":
             while T.is_pressed():
                 pass
             flag = True
-            log("The sorting process begins.", SUBSYSTEM_NAME)
+            CONVEYER_BELT.set_dps(360)
+            log("The delivery process begins.", SUBSYSTEM_NAME)
 
         while flag:
             color: Color = C.detect_color()
             if color is not None and color != Color.UNIDENTIFIED:
                 if color == Color.RED:
+                    log("Detected red cube......releasing", SUBSYSTEM_NAME)
                     RP.push_cube()
                 elif color == Color.GREEN:
+                    log("Detected green cube......releasing", SUBSYSTEM_NAME)
                     GP.push_cube()
                 elif color == Color.BLUE:
+                    log("Detected blue cube......releasing", SUBSYSTEM_NAME)
                     BP.push_cube()
             
             # If we detect another touch,
