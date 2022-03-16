@@ -17,8 +17,9 @@ class ColorDetectionUnit:
 
     def detect_color(self) -> Color:
         readings = self.color_sensor.get_value()
-        log("COLOR: " + str(readings), COMPONENT_NAME)
-        red, green, blue = readings
+        if readings is None:
+            return Color.UNIDENTIFIED
+        red, green, blue = readings[0], readings[1], readings[2]
         if red < 270 and red >= 220 and green < 40 and green >= 20 and blue < 30 and blue >= 10:
             return Color.RED
         elif red < 35 and red >= 20 and green < 135 and green >= 110 and blue < 35 and blue >= 15:
