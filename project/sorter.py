@@ -28,7 +28,7 @@ from components.color_detection_unit import ColorDetectionUnit, Color
 RP = CubeEjectionUnit("A")
 GP = CubeEjectionUnit("B")
 BP = CubeEjectionUnit("C")
-C = ColorDetectionUnit(1)
+C = ColorDetectionUnit(4)
 T = TouchSensor(2)
 
 wait_ready_sensors()

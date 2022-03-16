@@ -27,7 +27,7 @@ BP = CubeEjectionUnit("C")
 CONVEYER_BELT = Motor("D")
 CONVEYER_BELT.reset_encoder()
 CONVEYER_BELT.set_limits(dps=2050, power=80)
-C = ColorDetectionUnit(1)
+C = ColorDetectionUnit(4)
 T = TouchSensor(2)
 
 # Wait for hardwares to initialize.
