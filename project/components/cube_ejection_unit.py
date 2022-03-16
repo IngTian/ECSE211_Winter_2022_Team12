@@ -1,4 +1,4 @@
-from utils.brick import Motor
+from utils.brick import Motor, wait_ready_sensors
 from typing import List
 import time
 from config import PISTON
@@ -12,7 +12,9 @@ PISTON_PAUSE = PISTON["PISTON_PAUSE"]
 class CubeEjectionUnit:
 
     def __init__(self, port: str) -> None:
-        self.motor: Motor = Motor.create_motors(port)
+        self.motor: Motor = Motor(port)
+
+    def set_state(self):
         self.motor.reset_encoder()
         self.motor.set_limits(
             dps=PISTON['SPEED_LIMIT'], power=PISTON['POWER_LIMIT'])

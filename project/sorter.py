@@ -31,8 +31,10 @@ BP = CubeEjectionUnit("C")
 C = ColorDetectionUnit(1)
 T = TouchSensor(2)
 
-# Wait for hardwares to initialize.
 wait_ready_sensors()
+RP.set_state()
+GP.set_state()
+BP.set_state()
 
 SUBSYSTEM_NAME = "Sorter"
 
