@@ -25,8 +25,7 @@ RP = CubeEjectionUnit("A")
 GP = CubeEjectionUnit("B")
 BP = CubeEjectionUnit("C")
 CONVEYER_BELT = Motor("D")
-CONVEYER_BELT.reset_encoder()
-CONVEYER_BELT.set_limits(dps=2050, power=80)
+
 C = ColorDetectionUnit(4)
 T = TouchSensor(2)
 
@@ -36,6 +35,8 @@ wait_ready_sensors()
 RP.set_state()
 GP.set_state()
 BP.set_state()
+CONVEYER_BELT.reset_encoder()
+CONVEYER_BELT.set_limits(dps=2050, power=80)
 
 SUBSYSTEM_NAME = "Deliver"
 
