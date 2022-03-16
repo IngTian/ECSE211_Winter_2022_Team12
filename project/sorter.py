@@ -7,8 +7,8 @@ Retrieve foam cubes given a certain color.
 #from logic import get_bin_for_color
 from utils.brick import Motor, wait_ready_sensors, EV3ColorSensor, TouchSensor
 import time
-from cube_ejection_unit import PistonControls
-from color_detection_unit import ColorRecognition
+from components.cube_ejection_unit import PistonControls
+from components.color_detection_unit import ColorRecognition
 
 
 # Initialize hardware devices here 

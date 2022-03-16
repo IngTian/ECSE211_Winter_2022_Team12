@@ -1,6 +1,0 @@
-{
-    "motor": {
-        "extend_position": -300,
-        "reset_position": 0
-    }
-}
