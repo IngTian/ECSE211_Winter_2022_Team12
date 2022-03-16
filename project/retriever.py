@@ -1,37 +1,40 @@
 #!/usr/bin/env python3
 """
-Retrieve foam cubes given a certain color.
+This subsystem is responsible for delivering the
+requested color foam into the delivery area.
+
+Concretely, this subsystem shall be initiated by
+a press on the touch sensor. Then it shall wait for the readings
+from the color sensor. If the reading is stable for a period.
+Then, this subsystem shall command the corresponding cube 
+ejection unit to push the requested cube into the hole. 
 """
 
 # Adjust these imports based on your implementation
 #from logic import get_bin_for_color
-from utils.brick import Motor, wait_ready_sensors, EV3ColorSensor, TouchSensor
+from utils.brick import wait_ready_sensors, TouchSensor
+from utils.logging import log
 import time
-from cube_ejection_unit import PistonControls
-from color_detection_unit import ColorRecognition
+from components.cube_ejection_unit import CubeEjectionUnit
+from components.color_detection_unit import ColorDetectionUnit, Color
 
-
-# Initialize hardware devices here 
-RP, GP, BP = Motor.create_motors("ABC")
-C = EV3ColorSensor(1) # port S2
+# Initiate Hardware Devices, i.e.,
+# the cube ejection unit, the color
+# sensor, and the touch sensor.
+RP = CubeEjectionUnit("A")
+GP = CubeEjectionUnit("B")
+BP = CubeEjectionUnit("C")
+C = ColorDetectionUnit(1)
 T = TouchSensor(2)
 
+# Wait for hardwares to initialize.
 wait_ready_sensors()
 
-RP.reset_encoder()
-RP.set_limits(power=80)
-RP.set_limits(dps=2050)
+SUBSYSTEM_NAME = "Deliver"
 
-GP.reset_encoder()
-GP.set_limits(power=80)
-GP.set_limits(dps=2050)
 
-BP.reset_encoder()
-BP.set_limits(power=80)
-BP.set_limits(dps=2050)
-
-# limits are used for position movement, not power movement
-def main():
+if __name__ == "__main__":
+    log("The sorter has started.", SUBSYSTEM_NAME)
     flag = False
 
     while not flag:
@@ -39,35 +42,23 @@ def main():
             while T.is_pressed():
                 pass
             flag = True
+            log("The sorting process begins.", SUBSYSTEM_NAME)
+
         while flag:
-            reading = C.get_value()
-            if reading != None:
-                print(reading)
-                color = ColorRecognition.detectColor(reading[0], reading[1], reading[2])
-                if color != None:
-                    print(color)
-                    if color != "None":
-                        if color == "Red":
-                            print("here")
-                            PistonControls.push_cube(RP)
-                            print("extend")
-                        elif color == "Green":
-                            PistonControls.push_cube(GP)
-                        elif color == "Blue":
-                            PistonControls.push_cube(BP)
+            color: Color = C.detect_color()
+            if color is not None and color != Color.UNIDENTIFIED:
+                if color == Color.RED:
+                    RP.push_cube()
+                elif color == Color.GREEN:
+                    GP.push_cube()
+                elif color == Color.BLUE:
+                    BP.push_cube()
+            
+            # If we detect another touch,
+            # we simply terminate the program.
             if T.is_pressed():
                 while T.is_pressed():
                     pass
                 flag = False
 
-    PistonControls.reset_motors([RP, GP, BP])
-    
-        
-
-
-# Define your classes and functions here. Consider using other files if this one gets too large
-    
-
-if __name__ == "__main__":
-    print("Starting shoe retrieval system...")
-    main()
+    CubeEjectionUnit.reset_motors([RP, GP, BP])
