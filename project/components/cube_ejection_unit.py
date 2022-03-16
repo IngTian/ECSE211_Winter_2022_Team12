@@ -1,26 +1,33 @@
 from utils.brick import Motor
 from typing import List
 import time
-import config
+from config import PISTON
 
-EXTEND = config.PISTON["EXTENDING_POSITION"]
-RETRACT = config.PISTON["RETRACT_POSITION"]
-STARTING = config.PISTON["RESET_POSITION"]
-PISTON_PAUSE = config.PISTON["PISTON_PAUSE"]
+EXTEND = PISTON["EXTENDING_POSITION"]
+RETRACT = PISTON["RETRACT_POSITION"]
+STARTING = PISTON["RESET_POSITION"]
+PISTON_PAUSE = PISTON["PISTON_PAUSE"]
 
-class PistonControls:
-    @staticmethod
-    def push_cube(motor: Motor):
-        motor.set_position(EXTEND)
-        motor.wait_is_moving()
-        motor.wait_is_stopped()
-        motor.set_position(0)
-        motor.wait_is_moving()
-        motor.wait_is_stopped()
+
+class CubeEjectionUnit:
+
+    def __init__(self, port: str) -> None:
+        self.motor: Motor = Motor.create_motors(port)
+        self.motor.reset_encoder()
+        self.motor.set_limits(
+            dps=PISTON['SPEED_LIMIT'], power=PISTON['POWER_LIMIT'])
+
+    def push_cube(self) -> None:
+        self.motor.set_position(EXTEND)
+        self.motor.wait_is_moving()
+        self.motor.wait_is_stopped()
+        self.motor.set_position(0)
+        self.motor.wait_is_moving()
+        self.motor.wait_is_stopped()
         return
 
     @staticmethod
-    def reset_motors(motors: List[Motor]):
+    def reset_motors(motors: List[Motor]) -> None:
         for m in motors:
             m.set_position(STARTING)
         time.sleep(1.5)
