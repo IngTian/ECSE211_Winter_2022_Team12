@@ -43,18 +43,13 @@ SUBSYSTEM_NAME = "Deliver"
 
 if __name__ == "__main__":
     log("The deliver has started.", SUBSYSTEM_NAME)
-    flag = False
+    log("The delivery process begins.", SUBSYSTEM_NAME)
+    CONVEYER_BELT.set_dps(360)
 
-    while not flag:
+    while True:
+        color: Color = C.detect_color()
+
         if T.is_pressed():
-            while T.is_pressed():
-                pass
-            flag = True
-            CONVEYER_BELT.set_dps(360)
-            log("The delivery process begins.", SUBSYSTEM_NAME)
-
-        while flag:
-            color: Color = C.detect_color()
             if color is not None and color != Color.UNIDENTIFIED:
                 if color == Color.RED:
                     log("Detected red cube......releasing", SUBSYSTEM_NAME)
@@ -65,12 +60,3 @@ if __name__ == "__main__":
                 elif color == Color.BLUE:
                     log("Detected blue cube......releasing", SUBSYSTEM_NAME)
                     BP.push_cube()
-            
-            # If we detect another touch,
-            # we simply terminate the program.
-            if T.is_pressed():
-                while T.is_pressed():
-                    pass
-                flag = False
-
-    CubeEjectionUnit.reset_motors([RP, GP, BP])
