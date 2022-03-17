@@ -20,12 +20,14 @@ class ColorDetectionUnit:
         if readings is None:
             return Color.UNIDENTIFIED
         s = sum(readings[:3])
+        if s <= 30:
+            return Color.UNIDENTIFIED
         red, green, blue = readings[0] / s, readings[1] / s, readings[2] / s
-        if red >= 0.9:
+        if red >= 0.8:
             return Color.RED
-        elif green >= 0.9:
+        elif green >= 0.6:
             return Color.GREEN
-        elif blue >= 0.9:
+        elif red <= 0.3 and 0.3 <= green <= 0.4 and 0.3 <= blue <= 0.4:
             return Color.BLUE
         else:
             return Color.UNIDENTIFIED
