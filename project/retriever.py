@@ -24,7 +24,7 @@ from components.color_detection_unit import ColorDetectionUnit, Color
 RP = CubeEjectionUnit("A", config=PISTON_DELIVERY)
 GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
 BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
-CONVEYER_BELT = Motor("D", config=PISTON_DELIVERY)
+CONVEYER_BELT = Motor("D")
 
 C = ColorDetectionUnit(4)
 T = TouchSensor(2)
