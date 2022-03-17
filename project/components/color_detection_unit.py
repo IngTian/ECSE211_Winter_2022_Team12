@@ -19,12 +19,13 @@ class ColorDetectionUnit:
         readings = self.color_sensor.get_value()
         if readings is None:
             return Color.UNIDENTIFIED
-        red, green, blue = readings[0], readings[1], readings[2]
-        if red < 270 and red >= 220 and green < 40 and green >= 20 and blue < 30 and blue >= 10:
+        s = sum(readings[:3])
+        red, green, blue = readings[0] / s, readings[1] / s, readings[2] / s
+        if red >= 0.9:
             return Color.RED
-        elif red < 35 and red >= 20 and green < 135 and green >= 110 and blue < 35 and blue >= 15:
+        elif green >= 0.9:
             return Color.GREEN
-        elif red < 45 and red >= 15 and green < 60 and green >= 40 and blue < 55 and blue >= 40:
+        elif blue >= 0.9:
             return Color.BLUE
         else:
             return Color.UNIDENTIFIED
