@@ -14,17 +14,17 @@ ejection unit to push the requested cube into the hole.
 #from logic import get_bin_for_color
 from utils.brick import wait_ready_sensors, TouchSensor, Motor
 from utils.logging import log
-import time
+from config import PISTON_DELIVERY
 from components.cube_ejection_unit import CubeEjectionUnit
 from components.color_detection_unit import ColorDetectionUnit, Color
 
 # Initiate Hardware Devices, i.e.,
 # the cube ejection unit, the color
 # sensor, and the touch sensor.
-RP = CubeEjectionUnit("A")
-GP = CubeEjectionUnit("B")
-BP = CubeEjectionUnit("C")
-CONVEYER_BELT = Motor("D")
+RP = CubeEjectionUnit("A", config=PISTON_DELIVERY)
+GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
+BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
+CONVEYER_BELT = Motor("D", config=PISTON_DELIVERY)
 
 C = ColorDetectionUnit(4)
 T = TouchSensor(2)
