@@ -1,12 +1,13 @@
 from utils.brick import Motor, wait_ready_sensors
 from typing import List
 import time
-from config import PISTON
+from config import PISTON_SORTING as PISTON
 
 class CubeEjectionUnit:
 
     def __init__(self, port: str, config = PISTON) -> None:
         self.motor: Motor = Motor(port)
+        self.config = config
         self.EXTEND = config["EXTENDING_POSITION"]
         self.RETRACT = config["RETRACT_POSITION"]
         self.STARTING = config["RESET_POSITION"]
@@ -15,7 +16,7 @@ class CubeEjectionUnit:
     def set_state(self):
         self.motor.reset_encoder()
         self.motor.set_limits(
-            dps=PISTON['SPEED_LIMIT'], power=PISTON['POWER_LIMIT'])
+            dps=self.config['SPEED_LIMIT'], power=self.config['POWER_LIMIT'])
 
     def push_cube(self) -> None:
         self.motor.set_position(self.EXTEND)
