@@ -31,8 +31,8 @@ CONVEYER_BELT = Motor("D")
 SUCCESS_SOUND = Sound(duration=0.5, pitch="A4", volume=60)
 FAIL_SOUND = Sound(duration=0.3, pitch="C1", volume=60)
 
-C = ColorDetectionUnit(3)
-T = TouchSensor(2)
+C = ColorDetectionUnit(4)
+T = TouchSensor(3)
 
 # Wait for hardwares to initialize.
 wait_ready_sensors()
