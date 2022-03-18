@@ -14,6 +14,7 @@ ejection unit to push the requested cube into the hole.
 #from logic import get_bin_for_color
 from utils.brick import wait_ready_sensors, TouchSensor, Motor
 from utils.logging import log
+import time
 from config import PISTON_DELIVERY
 from components.cube_ejection_unit import CubeEjectionUnit
 from components.color_detection_unit import ColorDetectionUnit, Color
@@ -26,7 +27,7 @@ GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
 BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
 CONVEYER_BELT = Motor("D")
 
-C = ColorDetectionUnit(4)
+C = ColorDetectionUnit(3)
 T = TouchSensor(2)
 
 # Wait for hardwares to initialize.
@@ -44,19 +45,32 @@ SUBSYSTEM_NAME = "Deliver"
 if __name__ == "__main__":
     log("The deliver has started.", SUBSYSTEM_NAME)
     log("The delivery process begins.", SUBSYSTEM_NAME)
-    CONVEYER_BELT.set_dps(360)
 
     while True:
-        color: Color = C.detect_color()
-
         if T.is_pressed():
+
+            while T.is_pressed():
+                pass
+
+            log("Request Received.", SUBSYSTEM_NAME)
+
+            color: Color = C.detect_color()
             if color is not None and color != Color.UNIDENTIFIED:
                 if color == Color.RED:
                     log("Detected red cube......releasing", SUBSYSTEM_NAME)
                     RP.push_cube()
+                    CONVEYER_BELT.set_dps(360)
+                    time.sleep(2)
+                    CONVEYER_BELT.set_dps(0)
                 elif color == Color.GREEN:
                     log("Detected green cube......releasing", SUBSYSTEM_NAME)
                     GP.push_cube()
+                    CONVEYER_BELT.set_dps(360)
+                    time.sleep(2)
+                    CONVEYER_BELT.set_dps(0)
                 elif color == Color.BLUE:
                     log("Detected blue cube......releasing", SUBSYSTEM_NAME)
                     BP.push_cube()
+                    CONVEYER_BELT.set_dps(360)
+                    time.sleep(2)
+                    CONVEYER_BELT.set_dps(0)
