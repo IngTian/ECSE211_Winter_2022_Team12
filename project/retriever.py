@@ -14,6 +14,7 @@ ejection unit to push the requested cube into the hole.
 #from logic import get_bin_for_color
 from utils.brick import wait_ready_sensors, TouchSensor, Motor
 from utils.logging import log
+from utils.sound import Sound
 import time
 from config import PISTON_DELIVERY
 from components.cube_ejection_unit import CubeEjectionUnit
@@ -26,6 +27,9 @@ RP = CubeEjectionUnit("A", config=PISTON_DELIVERY)
 GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
 BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
 CONVEYER_BELT = Motor("D")
+
+SUCCESS_SOUND = Sound(duration=0.5, pitch="A4", volume=60)
+FAIL_SOUND = Sound(duration=0.3, pitch="C1", volume=60)
 
 C = ColorDetectionUnit(3)
 T = TouchSensor(2)
@@ -55,22 +59,33 @@ if __name__ == "__main__":
             log("Request Received.", SUBSYSTEM_NAME)
 
             color: Color = C.detect_color()
-            if color is not None and color != Color.UNIDENTIFIED:
-                if color == Color.RED:
-                    log("Detected red cube......releasing", SUBSYSTEM_NAME)
-                    RP.push_cube()
-                    CONVEYER_BELT.set_dps(360)
-                    time.sleep(2)
-                    CONVEYER_BELT.set_dps(0)
-                elif color == Color.GREEN:
-                    log("Detected green cube......releasing", SUBSYSTEM_NAME)
-                    GP.push_cube()
-                    CONVEYER_BELT.set_dps(360)
-                    time.sleep(2)
-                    CONVEYER_BELT.set_dps(0)
-                elif color == Color.BLUE:
-                    log("Detected blue cube......releasing", SUBSYSTEM_NAME)
-                    BP.push_cube()
-                    CONVEYER_BELT.set_dps(360)
-                    time.sleep(2)
-                    CONVEYER_BELT.set_dps(0)
+
+            # If the reading fails,
+            # we must notify the client.
+            if color is None or color == Color.UNIDENTIFIED:
+                FAIL_SOUND.play()
+                FAIL_SOUND.wait_done()
+                continue
+
+            if color == Color.RED:
+                log("Detected red cube......releasing", SUBSYSTEM_NAME)
+                RP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2)
+                CONVEYER_BELT.set_dps(0)
+            elif color == Color.GREEN:
+                log("Detected green cube......releasing", SUBSYSTEM_NAME)
+                GP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2)
+                CONVEYER_BELT.set_dps(0)
+            elif color == Color.BLUE:
+                log("Detected blue cube......releasing", SUBSYSTEM_NAME)
+                BP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2)
+                CONVEYER_BELT.set_dps(0)
+            
+            log("Request fulfilled.", SUBSYSTEM_NAME)
+            SUCCESS_SOUND.play()
+            SUCCESS_SOUND.wait_done()
