@@ -14,7 +14,7 @@ ejection unit to push the requested cube into the hole.
 #from logic import get_bin_for_color
 from utils.brick import wait_ready_sensors, TouchSensor, Motor
 from utils.logging import log
-from utils.sound import Sound
+from utils import sound
 import time
 from config import PISTON_DELIVERY
 from components.cube_ejection_unit import CubeEjectionUnit
@@ -28,8 +28,8 @@ GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
 BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
 CONVEYER_BELT = Motor("D")
 
-SUCCESS_SOUND = Sound(duration=0.5, pitch="A4", volume=60)
-FAIL_SOUND = Sound(duration=0.3, pitch="C1", volume=60)
+SUCCESS_SOUND = sound.Sound(duration=0.5, pitch="C4", volume=80)
+FAIL_SOUND = sound.Sound(duration=0.3, pitch="A4", volume=80)
 
 C = ColorDetectionUnit(4)
 T = TouchSensor(3)
@@ -63,6 +63,7 @@ if __name__ == "__main__":
             # If the reading fails,
             # we must notify the client.
             if color is None or color == Color.UNIDENTIFIED:
+                log("Color unrecognized.", SUBSYSTEM_NAME)
                 FAIL_SOUND.play()
                 FAIL_SOUND.wait_done()
                 continue
@@ -71,21 +72,30 @@ if __name__ == "__main__":
                 log("Detected red cube......releasing", SUBSYSTEM_NAME)
                 RP.push_cube()
                 CONVEYER_BELT.set_dps(360)
-                time.sleep(2)
+                time.sleep(0.3)
+                CONVEYER_BELT.set_dps(0)
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
                 CONVEYER_BELT.set_dps(0)
             elif color == Color.GREEN:
                 log("Detected green cube......releasing", SUBSYSTEM_NAME)
                 GP.push_cube()
                 CONVEYER_BELT.set_dps(360)
-                time.sleep(2)
+                time.sleep(0.3)
                 CONVEYER_BELT.set_dps(0)
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
+                CONVEYER_BELT.set_dps(0)            
             elif color == Color.BLUE:
                 log("Detected blue cube......releasing", SUBSYSTEM_NAME)
                 BP.push_cube()
                 CONVEYER_BELT.set_dps(360)
-                time.sleep(2)
+                time.sleep(0.3)
                 CONVEYER_BELT.set_dps(0)
-            
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
+                CONVEYER_BELT.set_dps(0)                      
+
             log("Request fulfilled.", SUBSYSTEM_NAME)
             SUCCESS_SOUND.play()
             SUCCESS_SOUND.wait_done()
