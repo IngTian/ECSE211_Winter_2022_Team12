@@ -1,7 +1,3 @@
-from black import main
-from torch import normal
-
-
 from utils.brick import EV3ColorSensor, TouchSensor, wait_ready_sensors
 from utils.logging import log
 import os
@@ -18,7 +14,7 @@ if __name__ == "__main__":
     # Create the logging folder, and the log file.
     # Then we create the title.
     if not os.path.isdir("log"):
-        os.makedir("log")
+        os.mkdir("log")
 
     with open(open("log/color_sensor.csv", "a")) as l:
         l.write(",".join([
@@ -52,4 +48,4 @@ if __name__ == "__main__":
                 log(
                     f"NR: {normalized_values[0]} NG: {normalized_values[1]} NB: {normalized_values[2]}", NAME)
                 log("-------DONE Y(^_^)Y-------", NAME)
-                l.write("\n" + ",".join(total_data))
+                l.write("\n" + ",".join(list(map(lambda i: str(i), total_data))))
