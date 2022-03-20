@@ -1,73 +1,101 @@
 #!/usr/bin/env python3
 """
-Retrieve foam cubes given a certain color.
+This subsystem is responsible for delivering the
+requested color foam into the delivery area.
+
+Concretely, this subsystem shall be initiated by
+a press on the touch sensor. Then it shall wait for the readings
+from the color sensor. If the reading is stable for a period.
+Then, this subsystem shall command the corresponding cube 
+ejection unit to push the requested cube into the hole. 
 """
 
 # Adjust these imports based on your implementation
 #from logic import get_bin_for_color
-from utils.brick import Motor, wait_ready_sensors, EV3ColorSensor, TouchSensor
+from utils.brick import wait_ready_sensors, TouchSensor, Motor
+from utils.logging import log
+from utils import sound
 import time
-from cube_ejection_unit import PistonControls
-from color_detection_unit import ColorRecognition
+from config import PISTON_DELIVERY
+from components.cube_ejection_unit import CubeEjectionUnit
+from components.color_detection_unit import ColorDetectionUnit, Color
 
+# Initiate Hardware Devices, i.e.,
+# the cube ejection unit, the color
+# sensor, and the touch sensor.
+RP = CubeEjectionUnit("A", config=PISTON_DELIVERY)
+GP = CubeEjectionUnit("B", config=PISTON_DELIVERY)
+BP = CubeEjectionUnit("C", config=PISTON_DELIVERY)
+CONVEYER_BELT = Motor("D")
 
-# Initialize hardware devices here 
-RP, GP, BP = Motor.create_motors("ABC")
-C = EV3ColorSensor(1) # port S2
-T = TouchSensor(2)
+SUCCESS_SOUND = sound.Sound(duration=0.5, pitch="C4", volume=80)
+FAIL_SOUND = sound.Sound(duration=0.3, pitch="A4", volume=80)
 
+C = ColorDetectionUnit(4)
+T = TouchSensor(3)
+
+# Wait for hardwares to initialize.
 wait_ready_sensors()
 
-RP.reset_encoder()
-RP.set_limits(power=80)
-RP.set_limits(dps=2050)
+RP.set_state()
+GP.set_state()
+BP.set_state()
+CONVEYER_BELT.reset_encoder()
+CONVEYER_BELT.set_limits(dps=2050, power=80)
 
-GP.reset_encoder()
-GP.set_limits(power=80)
-GP.set_limits(dps=2050)
+SUBSYSTEM_NAME = "Deliver"
 
-BP.reset_encoder()
-BP.set_limits(power=80)
-BP.set_limits(dps=2050)
-
-# limits are used for position movement, not power movement
-def main():
-    flag = False
-
-    while not flag:
-        if T.is_pressed():
-            while T.is_pressed():
-                pass
-            flag = True
-        while flag:
-            reading = C.get_value()
-            if reading != None:
-                print(reading)
-                color = ColorRecognition.detectColor(reading[0], reading[1], reading[2])
-                if color != None:
-                    print(color)
-                    if color != "None":
-                        if color == "Red":
-                            print("here")
-                            PistonControls.push_cube(RP)
-                            print("extend")
-                        elif color == "Green":
-                            PistonControls.push_cube(GP)
-                        elif color == "Blue":
-                            PistonControls.push_cube(BP)
-            if T.is_pressed():
-                while T.is_pressed():
-                    pass
-                flag = False
-
-    PistonControls.reset_motors([RP, GP, BP])
-    
-        
-
-
-# Define your classes and functions here. Consider using other files if this one gets too large
-    
 
 if __name__ == "__main__":
-    print("Starting shoe retrieval system...")
-    main()
+    log("The deliver has started.", SUBSYSTEM_NAME)
+    log("The delivery process begins.", SUBSYSTEM_NAME)
+
+    while True:
+        if T.is_pressed():
+
+            while T.is_pressed():
+                pass
+
+            log("Request Received.", SUBSYSTEM_NAME)
+
+            color: Color = C.detect_color()
+
+            # If the reading fails,
+            # we must notify the client.
+            if color is None or color == Color.UNIDENTIFIED:
+                log("Color unrecognized.", SUBSYSTEM_NAME)
+                FAIL_SOUND.play()
+                FAIL_SOUND.wait_done()
+                continue
+
+            if color == Color.RED:
+                log("Detected red cube......releasing", SUBSYSTEM_NAME)
+                RP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(0.3)
+                CONVEYER_BELT.set_dps(0)
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
+                CONVEYER_BELT.set_dps(0)
+            elif color == Color.GREEN:
+                log("Detected green cube......releasing", SUBSYSTEM_NAME)
+                GP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(0.3)
+                CONVEYER_BELT.set_dps(0)
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
+                CONVEYER_BELT.set_dps(0)            
+            elif color == Color.BLUE:
+                log("Detected blue cube......releasing", SUBSYSTEM_NAME)
+                BP.push_cube()
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(0.3)
+                CONVEYER_BELT.set_dps(0)
+                CONVEYER_BELT.set_dps(360)
+                time.sleep(2.7)
+                CONVEYER_BELT.set_dps(0)                      
+
+            log("Request fulfilled.", SUBSYSTEM_NAME)
+            SUCCESS_SOUND.play()
+            SUCCESS_SOUND.wait_done()

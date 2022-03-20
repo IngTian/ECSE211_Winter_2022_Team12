@@ -1,11 +1,33 @@
-class ColorRecognition:
-    @staticmethod
-    def detectColor(red, green, blue):
-        if red < 270 and red >= 220 and green < 40 and green >= 20 and blue < 30 and blue >= 10:
-            return "Red"
-        elif red < 35 and red >= 20 and green < 135 and green >= 110 and blue < 35 and blue >= 15:
-            return "Green"
-        elif red < 45 and red >= 15 and green < 60 and green >= 40 and blue < 55 and blue >= 40:
-            return "Blue"
+from utils.brick import EV3ColorSensor
+from enum import Enum
+from utils.logging import log
+
+
+class Color(Enum):
+    RED = 1,
+    GREEN = 2,
+    BLUE = 3,
+    UNIDENTIFIED = 4
+
+COMPONENT_NAME = 'Color Sensor'
+class ColorDetectionUnit:
+
+    def __init__(self, port: int) -> None:
+        self.color_sensor: EV3ColorSensor = EV3ColorSensor(port)
+
+    def detect_color(self) -> Color:
+        readings = self.color_sensor.get_value()
+        if readings is None:
+            return Color.UNIDENTIFIED
+        s = sum(readings[:3])
+        if s <= 30:
+            return Color.UNIDENTIFIED
+        red, green, blue = readings[0] / s, readings[1] / s, readings[2] / s
+        if red >= 0.77:
+            return Color.RED
+        elif green >= 0.55:
+            return Color.GREEN
+        elif red <= 0.3 and 0.3 <= green <= 0.4 and 0.3 <= blue <= 0.48:
+            return Color.BLUE
         else:
-            return "None"
+            return Color.UNIDENTIFIED
