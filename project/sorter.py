@@ -62,6 +62,8 @@ if __name__ == "__main__":
                 elif color == Color.BLUE:
                     log("Detected blue cube......pushing", SUBSYSTEM_NAME)
                     BP.push_cube()
+
+            time.sleep(0.5)
             
             # If we detect another touch,
             # we simply terminate the program.

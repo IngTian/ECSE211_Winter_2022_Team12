@@ -23,9 +23,9 @@ class ColorDetectionUnit:
         if s <= 30:
             return Color.UNIDENTIFIED
         red, green, blue = readings[0] / s, readings[1] / s, readings[2] / s
-        if red >= 0.78:
+        if red >= 0.77:
             return Color.RED
-        elif green >= 0.6:
+        elif green >= 0.55:
             return Color.GREEN
         elif red <= 0.3 and 0.3 <= green <= 0.4 and 0.3 <= blue <= 0.48:
             return Color.BLUE
